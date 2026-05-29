@@ -2,7 +2,7 @@
 
 Production-grade API gateway built in Go. Handles JWT authentication, per-client sliding-window rate limiting, reverse proxying, and streams live traffic metrics to a WebSocket admin dashboard.
 
-**[Live Demo](https://adsouza5.github.io/portfolio-react/projects/prism)**
+**[Live Demo](https://www.iadamdsouza.com/projects/prism)**
 
 ## Architecture
 
