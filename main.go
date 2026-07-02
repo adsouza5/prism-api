@@ -46,6 +46,11 @@ func main() {
 		w.Write([]byte(`{"status":"ok"}`))
 	})
 
+	// Echo endpoint — JWT + rate limit enforced, no external dependency
+	mux.Handle("/api/echo", middleware.ValidateJWT(
+		middleware.RateLimit(http.HandlerFunc(proxy.EchoHandler)),
+	))
+
 	// Proxied routes — require JWT + rate limit
 	protected := middleware.ValidateJWT(
 		middleware.RateLimit(
