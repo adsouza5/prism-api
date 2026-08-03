@@ -44,12 +44,13 @@ func init() {
 			RateLimit:   120,
 			UpstreamURL: upstream,
 		},
-		// High-limit client for performance load tests (rate limiter won't throttle the run).
+		// Effectively unlimited client for load tests — rate limiter must not be the bottleneck.
+		// At 2 VUs on localhost the echo endpoint does ~1500 req/s; 1M/min = 16666 req/s headroom.
 		"loadtest": {
 			ID:          "loadtest",
 			Name:        "Load Test Client",
 			APIKey:      "key_loadtest_bench",
-			RateLimit:   5000,
+			RateLimit:   1_000_000,
 			UpstreamURL: upstream,
 		},
 	}
