@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
@@ -54,7 +55,9 @@ func RateLimit(next http.Handler) http.Handler {
 
 		if len(win.timestamps) >= client.RateLimit {
 			win.mu.Unlock()
-			w.Header().Set("X-RateLimit-Limit", string(rune(client.RateLimit)))
+			w.Header().Set("X-RateLimit-Limit", strconv.Itoa(client.RateLimit))
+			w.Header().Set("X-RateLimit-Remaining", "0")
+			w.Header().Set("Retry-After", "60")
 			http.Error(w, "rate limit exceeded", http.StatusTooManyRequests)
 			return
 		}

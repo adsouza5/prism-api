@@ -29,11 +29,12 @@ var (
 	upgrader = websocket.Upgrader{
 		CheckOrigin: func(r *http.Request) bool { return true },
 	}
-	clients   = map[*websocket.Conn]bool{}
-	clientsMu sync.Mutex
-	metrics   = &Metrics{}
-	metricsMu sync.Mutex
-	latencies []int64
+	clients      = map[*websocket.Conn]bool{}
+	clientsMu    sync.Mutex
+	metrics      = &Metrics{}
+	metricsMu    sync.Mutex
+	latencySum   int64
+	latencyCount int64
 )
 
 func Broadcast(evt TrafficEvent) {
@@ -45,12 +46,9 @@ func Broadcast(evt TrafficEvent) {
 	if evt.Status == 429 {
 		metrics.RateLimited++
 	}
-	latencies = append(latencies, evt.LatencyMs)
-	var sum int64
-	for _, l := range latencies {
-		sum += l
-	}
-	metrics.AvgLatencyMs = float64(sum) / float64(len(latencies))
+	latencySum += evt.LatencyMs
+	latencyCount++
+	metrics.AvgLatencyMs = float64(latencySum) / float64(latencyCount)
 	metricsMu.Unlock()
 
 	payload := map[string]interface{}{
